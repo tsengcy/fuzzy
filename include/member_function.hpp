@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 enum MEMBERFUNCTION
 {
@@ -13,6 +14,7 @@ enum MEMBERFUNCTION
     SIGMOIDAL = 4
 };
 
+template<typename T>
 class base
 {
 public:
@@ -21,71 +23,87 @@ public:
 
     }
 
-    virtual float activate(float x) = 0;
+    virtual T activate(T x) = 0;
 protected:
 };
 
-template<MEMBERFUNCTION mf>
+template<MEMBERFUNCTION mf, typename T = float>
 class memberFunction;
 
-template<>
-class memberFunction<TRIANGLE> : public base
+template<typename T>
+class memberFunction<TRIANGLE, T> : public base<T>
 {
 public:
-    memberFunction(float _a, float _b, float _c)
+    memberFunction(T _a, T _b, T _c)
     : a(_a), b(_b), c(_c){}
 
-    float activate(float x) override
+    T activate(T x) override
     {
-        return std::max(std::min((x-a)/(b-a), (c-x)/(c-b)), 0.0f);
+        return std::max(std::min((x-a)/(b-a), (c-x)/(c-b)), 0.0);
     }
 protected:
-    float a, b, c;
+    T a, b, c;
 };
 
-template<>
-class memberFunction<TRAPEXOIDAL> : public base
+template<typename T>
+class memberFunction<TRAPEXOIDAL, T> : public base<T>
 {
 public:
-    memberFunction(float _a, float _b, float _c, float _d)
+    memberFunction(T _a, T _b, T _c, T _d)
     : a(_a), b(_b), c(_c), d(_d){}
 
-    float activate(float x) override
+    T activate(T x) override
     {
-        return std::max(std::min((x-a)/(b-a), 1.0f, (d-x)/(d-c)), 0.0f);
+        return std::max(std::min((x-a)/(b-a), 1.0, (d-x)/(d-c)), 0.0);
     }
 protected:
-    float a, b, c, d;
+    T a, b, c, d;
 };
 
-template<>
-class memberFunction<GAUSSIAN> : public base
+template<typename T>
+class memberFunction<GAUSSIAN, T> : public base<T>
 {
 public:
-    memberFunction()
-    {
+    memberFunction(T _c, T _alpha)
+    : c(_c), alpha(_alpha){}
 
+    T activate(T x) override
+    {
+        return exp(-1/2*pow((x-c)/alpha, 2.0));
     }
+protected:
+    T c, alpha;
 };
 
-template<>
-class memberFunction<BELL> : public base
+template<typename T>
+class memberFunction<BELL, T> : public base<T>
 {
 public:
-    memberFunction()
-    {
+    memberFunction(T _a, T _b, T _c)
+    :a(_a), b(_b), c(_c)
+    {}
 
+    T activate(T x) override
+    {
+        return 1 / (1 + fabs(pow((x-c)/a, 2*b)));
     }
+protected:
+    T a, b, c;
 };
 
-template<>
-class memberFunction<SIGMOIDAL> : public base
+template<typename T>
+class memberFunction<SIGMOIDAL, T> : public base<T>
 {
 public:
-    memberFunction()
-    {
+    memberFunction(T _a, T _c)
+    : a(_a), c(_c){}
 
+    T activate(T x) override
+    {
+        return 1 / (1 + exp(-a * (x-c)));
     }
+protected:
+    T a, c;
 };
 
 
