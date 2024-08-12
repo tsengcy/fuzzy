@@ -43,6 +43,15 @@ protected:
 template<MEMBERFUNCTION mf>
 class memberFunction;
 
+// template<NORMOPERATOR op, MEMBERFUNCTION mf1, MEMBERFUNCTION mf2>
+// class memberFunction;
+
+// template<NORMOPERATOR op, MEMBERFUNCTION mf1, MEMBERFUNCTION mf2, MEMBERFUNCTION... Args>
+// class memberFunction
+// {
+
+// }
+
 template<>
 class memberFunction<TRIANGLE> : public base
 {
@@ -119,13 +128,6 @@ protected:
     float a, c;
 };
 
-
-
-
-
-
-
-
-
+// class memberFunction
 
 #endif //MEMBER_FUNCTION_HPP
