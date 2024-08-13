@@ -25,14 +25,14 @@ enum NORMOPERATOR
 template<NORMOPERATOR op>
 float Tnorm(float x, float y);
 
-template<NORMOPERATOR op>
-float Tnorm(float x, float y, float);
+template<NORMOPERATOR op, float v>
+float Tnorm(float x, float y);
 
 template<NORMOPERATOR op>
 float Snorm(float x, float y);
 
-template<NORMOPERATOR op>
-float Snorm(float x, float y, float);
+template<NORMOPERATOR op, float v>
+float Snorm(float x, float y);
 
 template<>
 float Tnorm<MAX_MIN>(float x, float y)
@@ -92,16 +92,16 @@ float Snorm<DRASTIC>(float x, float y)
         return 1; 
 }
 
-template<>
-float Tnorm<YAGER>(float x, float y, float q)
+template<float v>
+float Tnorm<YAGER>(float x, float y)
 {
-    return 1.0 - std::min(1.0, pow((pow(1-x, q) + pow(1-y, q)), 1/q));
+    return 1.0 - std::min(1.0, pow((pow(1-x, v) + pow(1-y, v)), 1/v));
 }
 
-template<>
-float Snorm<YAGER>(float x, float y, float q)
+template<float v>
+float Snorm<YAGER>(float x, float y)
 {
-    return std::min(1.0, pow((pow(x, q) + pow(y, q)), 1/q));
+    return std::min(1.0, pow((pow(x, v) + pow(y, v)), 1/v));
 }
 
 
