@@ -7,6 +7,7 @@
 
 enum NORMOPERATOR
 {
+    NONE = -1,
     MAX_MIN = 0,
     ALGEBRAIC = 1,
     BOUNDED = 2,

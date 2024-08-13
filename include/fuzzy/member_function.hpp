@@ -14,20 +14,6 @@ enum MEMBERFUNCTION
     SIGMOIDAL = 4
 };
 
-enum NORMOPERATOR
-{
-    MAX_MIN = 0,
-    ALGEBRAIC = 1,
-    BOUNDED = 2,
-    DRASTIC = 3,
-    YAGER = 4,
-    DUBOIS_PRADE = 5,
-    HAMACHER = 6,
-    FRANK = 7,
-    SUGENO = 8,
-    DOMBI = 9
-};
-
 class base
 {
 public:
@@ -42,15 +28,6 @@ protected:
 
 template<MEMBERFUNCTION mf>
 class memberFunction;
-
-// template<NORMOPERATOR op, MEMBERFUNCTION mf1, MEMBERFUNCTION mf2>
-// class memberFunction;
-
-// template<NORMOPERATOR op, MEMBERFUNCTION mf1, MEMBERFUNCTION mf2, MEMBERFUNCTION... Args>
-// class memberFunction
-// {
-
-// }
 
 template<>
 class memberFunction<TRIANGLE> : public base
