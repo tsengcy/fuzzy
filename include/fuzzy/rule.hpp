@@ -8,7 +8,7 @@
 #include <fuzzy/operator.hpp>
 #include <fuzzy/member_function.hpp>
 
-template<NORMOPERATOR op>
+// template<NORMOPERATOR op>
 class rule
 {
 public:
@@ -30,22 +30,21 @@ public:
     {
         mvMF.push_back(mf);
         mvFunc.push_back(func);
-    }   
+    }
 
     float activate(float x)
     {
-        if(mvMF.size() == 0)
-        {
-            throw std::runtime_error("no member function exits");
-        }
+        return mvMF.back()->activate(x);;
+    }
 
-        float value;
-        value = mvMF.at(0)->activate(x);
+    template<typename... Args>
+    float activate(float x, Args... args)
+    {
+        float value = activate(args...);
+        int id = sizeof...(args);
+
+        value = mvFunc.at(mvFunc.size() - id)(value, x);
         
-        for(int i=0; i<mvMF.size(); i++)
-        {
-            value = mvFunc.at(i)(x, value);
-        }
         return value;
     }
 

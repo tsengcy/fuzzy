@@ -18,3 +18,10 @@ add_executable(test1
 # target_link_libraries(test1
 #     aa
 # )
+
+add_executable(test2
+    include/fuzzy/member_function.hpp
+    include/fuzzy/operator.hpp
+    include/fuzzy/rule.hpp
+    src/test/test2.cpp
+)

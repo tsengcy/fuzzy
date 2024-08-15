@@ -21,18 +21,23 @@ enum NORMOPERATOR
     SCHWEIZER_SKLAR = 10,
 };
 
-
 template<NORMOPERATOR op>
-float Tnorm(float x, float y);
+struct fuzzyOperator
+{
+    fuzzy_operator(float parameter);
 
-template<NORMOPERATOR op, float v>
-float Tnorm(float x, float y);
+    float Tnorm(float x, float y);
 
-template<NORMOPERATOR op>
-float Snorm(float x, float y);
+    float Snorm(float x, float y);
 
-template<NORMOPERATOR op, float v>
-float Snorm(float x, float y);
+    float parameter;
+}
+
+template<>
+fuzzyOperator::fuzzy_operator<MAX_MIN>(float parameter)
+{
+
+}
 
 template<>
 float Tnorm<MAX_MIN>(float x, float y)
