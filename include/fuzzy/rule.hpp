@@ -26,10 +26,15 @@ public:
         }
     }
 
-    void insert(base* mf, std::function<float(float, float)> func)
+    void insert(base* mf, baseOperator* func)
     {
         mvMF.push_back(mf);
         mvFunc.push_back(func);
+    }
+
+    float activate(int id, float x)
+    {
+        return mvMF.at(id)->activate(x);
     }
 
     float activate(float x)
@@ -42,15 +47,17 @@ public:
     {
         float value = activate(args...);
         int id = sizeof...(args);
+        // std::cout << "id: " << id << std::endl;
+        float y = mvMF.at(mvFunc.size() - id)->activate(x);
 
-        value = mvFunc.at(mvFunc.size() - id)(value, x);
+        value = mvFunc.at(mvFunc.size() - id)->norm(value, y);
         
         return value;
     }
 
 private:
     std::vector<base*> mvMF;
-    std::vector<std::function<float(float, float)>> mvFunc;
+    std::vector<baseOperator*> mvFunc;
 };
 
 #endif //RULE_HPP

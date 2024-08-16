@@ -7,7 +7,6 @@
 
 enum NORMOPERATOR
 {
-    NONE = -1,
     MAX_MIN = 0,
     ALGEBRAIC = 1,
     BOUNDED = 2,
@@ -21,94 +20,187 @@ enum NORMOPERATOR
     SCHWEIZER_SKLAR = 10,
 };
 
-template<NORMOPERATOR op>
-struct fuzzyOperator
+enum OPERATOR
 {
-    fuzzy_operator(float parameter);
+    AND = 0,
+    OR = 1,
+};
 
-    float Tnorm(float x, float y);
+class baseOperator
+{
+public:
+    baseOperator(){};
+    virtual float norm(float x, float y) = 0;
+};
 
-    float Snorm(float x, float y);
-
-    float parameter;
-}
+template<NORMOPERATOR nop, OPERATOR op>
+class fuzzyOperator;
 
 template<>
-fuzzyOperator::fuzzy_operator<MAX_MIN>(float parameter)
+class fuzzyOperator<MAX_MIN, AND> : public baseOperator
 {
+public:
+    fuzzyOperator(){}
 
-}
+    float norm(float x, float y) override
+    {
+        return std::min(x, y);
+    }
+};
 
 template<>
-float Tnorm<MAX_MIN>(float x, float y)
+class fuzzyOperator<MAX_MIN, OR> : public baseOperator
 {
-    return std::min(x, y);
-}
+public:
+    fuzzyOperator(){}
+
+    float norm(float x, float y) override
+    {
+        return std::max(x, y);
+    }
+};
 
 template<>
-float Snorm<MAX_MIN>(float x, float y)
+class fuzzyOperator<ALGEBRAIC, AND> : public baseOperator
 {
-    return std::min(x, y);
-}
+public:
+    fuzzyOperator(){}
+
+    float norm(float x, float y) override
+    {
+        return x * y;
+    }
+};
 
 template<>
-float Tnorm<ALGEBRAIC>(float x, float y)
+class fuzzyOperator<ALGEBRAIC, OR> : public baseOperator
 {
-    return x * y;
-}
+public:
+    fuzzyOperator(){}
+
+    float norm(float x, float y) override
+    {
+        return x + y - x * y;
+    }
+};
 
 template<>
-float Snorm<ALGEBRAIC>(float x, float y)
+class fuzzyOperator<BOUNDED, AND> : public baseOperator
 {
-    return x + y - x * y;
-}
+public:
+    fuzzyOperator(){}
+
+    float norm(float x, float y) override
+    {
+        return std::max(0.0f, x + y - 1);
+    }
+};
 
 template<>
-float Tnorm<BOUNDED>(float x, float y)
+class fuzzyOperator<BOUNDED, OR> : public baseOperator
 {
-    return std::max(0.0f, x + y - 1);
-}
+public:
+    fuzzyOperator(){}
+
+    float norm(float x, float y) override
+    {
+        return std::min(1.0f, x + y);
+    }
+};
 
 template<>
-float Snorm<BOUNDED>(float x, float y)
+class fuzzyOperator<DRASTIC, AND> : public baseOperator
 {
-    return std::min(1.0f, x + y);
-}
+public:
+    fuzzyOperator(){}
+
+    float norm(float x, float y) override
+    {
+        if(x == 1)
+            return y;
+        else if(y == 1)
+            return x;
+        else
+            return 0; 
+    }
+};
 
 template<>
-float Tnorm<DRASTIC>(float x, float y)
+class fuzzyOperator<DRASTIC, OR> : public baseOperator
 {
-    if(x == 1)
-        return y;
-    else if(y == 1)
-        return x;
-    else
-        return 0; 
-}
+public:
+    fuzzyOperator(){}
+
+    float norm(float x, float y) override
+    {
+        if(x == 0)
+            return y;
+        else if(y == 0)
+            return x;
+        else
+            return 1; 
+    }
+};
 
 template<>
-float Snorm<DRASTIC>(float x, float y)
+class fuzzyOperator<YAGER, AND> : public baseOperator
 {
-    if(x == 0)
-        return y;
-    else if(y == 0)
-        return x;
-    else
-        return 1; 
-}
+public:
+    fuzzyOperator(float _q)
+    : q(_q){}
 
-template<float v>
-float Tnorm<YAGER>(float x, float y)
+    float norm(float x, float y) override
+    {
+        return 1.0 - std::min(1.0, pow((pow(1-x, q) + pow(1-y, q)), 1/q));
+    }
+private:
+    float q;
+};
+
+template<>
+class fuzzyOperator<YAGER, OR> : public baseOperator
 {
-    return 1.0 - std::min(1.0, pow((pow(1-x, v) + pow(1-y, v)), 1/v));
-}
+public:
+    fuzzyOperator(float _q)
+    : q(_q){}
 
-template<float v>
-float Snorm<YAGER>(float x, float y)
+    float norm(float x, float y) override
+    {
+        return std::min(1.0, pow((pow(x, q) + pow(y, q)), 1/q));
+    }
+private:
+    float q;
+};
+
+template<>
+class fuzzyOperator<SCHWEIZER_SKLAR, AND> : public baseOperator
 {
-    return std::min(1.0, pow((pow(x, v) + pow(y, v)), 1/v));
-}
+public:
+    fuzzyOperator(float _p)
+    : p(_p){}
 
+    float norm(float x, float y) override
+    {
+        return pow(std::max(0.0, pow(x, -p) + pow(y, -p) - 1.0f), -1/p);
+    }
+private:
+    float p;
+};
+
+template<>
+class fuzzyOperator<SCHWEIZER_SKLAR, OR> : public baseOperator
+{
+public:
+    fuzzyOperator(float _p)
+    : p(_p){}
+
+    float norm(float x, float y) override
+    {
+        return 1 - pow(std::max(0.0, pow(1-x, -p) + pow(1-y, -p) - 1.0f), -1/p);
+    }
+private:
+    float p;
+};
 
 
 

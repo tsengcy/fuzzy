@@ -17,11 +17,7 @@ enum MEMBERFUNCTION
 class base
 {
 public:
-    base()
-    {
-
-    }
-
+    base(){}
     virtual float activate(float x) = 0;
 protected:
 };
@@ -80,7 +76,8 @@ class memberFunction<BELL> : public base
 public:
     memberFunction(float _a, float _b, float _c)
     :a(_a), b(_b), c(_c)
-    {}
+    {
+    }
 
     float activate(float x) override
     {
